@@ -1,8 +1,8 @@
-package com.jscherrer.personal;
+package com.jscherrer.personal.setup;
 
 import org.junit.Test;
 
-public class CreateSecurityGroupTest {
+public class SecurityGroupCreatorTest {
 
     @Test
     public void createSecurityGroup() {

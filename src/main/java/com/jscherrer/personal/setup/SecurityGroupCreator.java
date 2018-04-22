@@ -1,4 +1,4 @@
-package com.jscherrer.personal;
+package com.jscherrer.personal.setup;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2;
@@ -12,7 +12,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-public class CreateSecurityGroup {
+public class SecurityGroupCreator {
 
     public void createSecurityGroup(String securityGroupName, String securityGroupDescription) {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();

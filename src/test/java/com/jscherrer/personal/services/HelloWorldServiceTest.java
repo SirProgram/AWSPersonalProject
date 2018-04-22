@@ -12,7 +12,7 @@ public class HelloWorldServiceTest {
     @Test
     public void greetName() {
         String inputName = "Amely";
-        String expectedResult = "Greetings " + inputName;
+        String expectedResult = "Greetings Amely";
 
         Response response = helloWorldService.greetName(inputName);
         String responseAsString = (String) response.getEntity();
