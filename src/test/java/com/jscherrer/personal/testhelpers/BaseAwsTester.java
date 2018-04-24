@@ -30,8 +30,12 @@ public class BaseAwsTester {
 
     @AfterClass
     public static void tearDown() {
-        spotInstanceRequester.stopSpotRequest(requestIds);
-        spotInstanceRequester.stopInstances(instanceIds);
+        if (requestIds != null && requestIds.size() > 0) {
+            spotInstanceRequester.stopSpotRequest(requestIds);
+        }
+        if (instanceIds != null && instanceIds.size() > 0) {
+            spotInstanceRequester.stopInstances(instanceIds);
+        }
     }
 
     protected static void setupSecurityGroup() {
