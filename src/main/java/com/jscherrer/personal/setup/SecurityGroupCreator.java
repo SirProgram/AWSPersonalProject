@@ -18,7 +18,7 @@ public class SecurityGroupCreator {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityGroupCreator.class);
 
-    public void createSecurityGroup(String securityGroupName, String securityGroupDescription) {
+    public void createSecurityGroup(String securityGroupName, String securityGroupDescription) throws UnknownHostException {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
 
         requestNewSecurityGroup(ec2, securityGroupName, securityGroupDescription);
@@ -38,7 +38,7 @@ public class SecurityGroupCreator {
             ec2.authorizeSecurityGroupIngress(ingressRequest);
         } catch (AmazonServiceException ase) {
             //Already created?
-            LOG.info(ase.getMessage());
+            LOG.warn(ase.getMessage());
         }
     }
 
@@ -53,16 +53,9 @@ public class SecurityGroupCreator {
         return ipPermissions;
     }
 
-    private String getHostIpAddress() {
-        String ipAddr = "0.0.0.0/0";
-
-        try {
-            InetAddress addr = InetAddress.getLocalHost();
-            ipAddr = addr.getHostAddress() + "/10";
-        } catch (UnknownHostException e) {
-            LOG.error(e.getMessage());
-        }
-        return ipAddr;
+    private String getHostIpAddress() throws UnknownHostException {
+        InetAddress hostAddress = InetAddress.getLocalHost();
+        return hostAddress.getHostAddress() + "/32";
     }
 
     private boolean requestNewSecurityGroup(AmazonEC2 ec2, String securityGroupName, String securityGroupDescription) {
@@ -72,7 +65,7 @@ public class SecurityGroupCreator {
             return true;
         } catch (AmazonServiceException ase) {
             //Already created?
-            LOG.error(ase.getMessage());
+            LOG.warn(ase.getMessage());
         }
         return false;
     }

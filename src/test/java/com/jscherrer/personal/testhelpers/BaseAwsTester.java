@@ -10,6 +10,7 @@ import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class BaseAwsTester {
@@ -19,14 +20,8 @@ public class BaseAwsTester {
     protected static final SpotInstanceRequester spotInstanceRequester = new SpotInstanceRequester();
     protected static final SecurityGroupCreator securityGroupCreator = new SecurityGroupCreator();
     protected static final AmazonEC2 EC2 = AmazonEC2ClientBuilder.defaultClient();
-    protected static ArrayList<String> requestIds;
-    protected static ArrayList<String> instanceIds;
-
-    @BeforeClass
-    public static void setUp() {
-        requestIds = new ArrayList<>();
-        instanceIds = new ArrayList<>();
-    }
+    protected static ArrayList<String> requestIds = new ArrayList<>();
+    protected static ArrayList<String> instanceIds = new ArrayList<>();
 
     @AfterClass
     public static void tearDown() {
@@ -38,7 +33,7 @@ public class BaseAwsTester {
         }
     }
 
-    protected static void setupSecurityGroup() {
+    protected static void setupSecurityGroup() throws UnknownHostException {
         LOG.info("Setting up AWS test security group");
         securityGroupCreator.createSecurityGroup(AWSTestConstants.SECURITY_GROUP_NAME,
                 "Personal Project Aws Test Security Group");

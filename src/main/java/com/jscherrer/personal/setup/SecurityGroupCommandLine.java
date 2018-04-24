@@ -4,12 +4,14 @@ import com.jscherrer.personal.aws.AWSConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.UnknownHostException;
+
 public class SecurityGroupCommandLine {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityGroupCommandLine.class);
     private static final SecurityGroupCreator createSecurityGroup = new SecurityGroupCreator();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnknownHostException {
         String securityGroupName = AWSConstants.SECURITY_GROUP_NAME;
         String securityGroupDescription = "Security Group created by AWSPersonalProject";
 

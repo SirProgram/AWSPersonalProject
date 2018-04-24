@@ -6,10 +6,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.net.UnknownHostException;
+
 public class SpotInstanceRequesterTest extends BaseAwsTester {
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws UnknownHostException {
         setupSecurityGroup();
     }
 

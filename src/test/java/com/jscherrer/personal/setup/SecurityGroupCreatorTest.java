@@ -7,6 +7,7 @@ import com.jscherrer.personal.testhelpers.BaseAwsTester;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +15,7 @@ import java.util.UUID;
 public class SecurityGroupCreatorTest extends BaseAwsTester {
 
     @Test
-    public void canCreateSecurityGroup() {
+    public void canCreateSecurityGroup() throws UnknownHostException {
         String expectedSecurityGroupName = UUID.randomUUID().toString();
 
         securityGroupCreator.createSecurityGroup(expectedSecurityGroupName,
