@@ -31,15 +31,17 @@ public class SecurityGroupCreator {
         authorizeSecurityGroup(ec2, ipPermissions, securityGroupName);
     }
 
-    private void authorizeSecurityGroup(AmazonEC2 ec2, ArrayList<IpPermission> ipPermissions, String securityGroupName) {
+    private boolean authorizeSecurityGroup(AmazonEC2 ec2, ArrayList<IpPermission> ipPermissions, String securityGroupName) {
         try {
             AuthorizeSecurityGroupIngressRequest ingressRequest =
                     new AuthorizeSecurityGroupIngressRequest(securityGroupName, ipPermissions);
             ec2.authorizeSecurityGroupIngress(ingressRequest);
+            return true;
         } catch (AmazonServiceException ase) {
             //Already created?
             LOG.warn(ase.getMessage());
         }
+        return false;
     }
 
     private ArrayList<IpPermission> createIpPermissions(ArrayList<IpRange> ipRanges) {

@@ -32,10 +32,7 @@ public class SpotInstanceRequester {
             EC2.cancelSpotInstanceRequests(cancelRequest);
         } catch (AmazonServiceException e) {
             LOG.error("Error cancelling instances");
-            LOG.error("Caught Exception: " + e.getMessage());
-            LOG.error("Reponse Status Code: " + e.getStatusCode());
-            LOG.error("Error Code: " + e.getErrorCode());
-            LOG.error("Request ID: " + e.getRequestId());
+            LOG.error("Caught Exception: ", e);
         }
     }
 
@@ -45,10 +42,7 @@ public class SpotInstanceRequester {
             EC2.terminateInstances(terminateRequest);
         } catch (AmazonServiceException e) {
             LOG.error("Error terminating instances");
-            LOG.error("Caught Exception: " + e.getMessage());
-            LOG.error("Reponse Status Code: " + e.getStatusCode());
-            LOG.error("Error Code: " + e.getErrorCode());
-            LOG.error("Request ID: " + e.getRequestId());
+            LOG.error("Caught Exception: ", e);
         }
     }
 

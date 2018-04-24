@@ -6,7 +6,6 @@ import com.amazonaws.services.ec2.model.RequestSpotInstancesRequest;
 import com.jscherrer.personal.aws.SpotInstanceRequester;
 import com.jscherrer.personal.setup.SecurityGroupCreator;
 import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,7 @@ public class BaseAwsTester {
     protected static ArrayList<String> instanceIds = new ArrayList<>();
 
     @AfterClass
-    public static void tearDown() {
+    public static void tearDownClass() {
         if (requestIds != null && requestIds.size() > 0) {
             spotInstanceRequester.stopSpotRequest(requestIds);
         }
