@@ -1,9 +1,10 @@
-package com.jscherrer.personal.deployment.aws;
+package com.jscherrer.personal.deployment.spotinstance;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.*;
+import com.jscherrer.personal.deployment.AWSConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

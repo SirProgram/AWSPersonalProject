@@ -1,4 +1,4 @@
-package com.jscherrer.personal.deployment.aws;
+package com.jscherrer.personal.deployment;
 
 public class AWSConstants {
     public static final String SECURITY_GROUP_NAME = "PersonalProjectGroup";

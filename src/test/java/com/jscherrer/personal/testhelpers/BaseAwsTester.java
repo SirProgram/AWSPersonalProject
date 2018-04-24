@@ -3,7 +3,7 @@ package com.jscherrer.personal.testhelpers;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.RequestSpotInstancesRequest;
-import com.jscherrer.personal.deployment.aws.SpotInstanceRequester;
+import com.jscherrer.personal.deployment.spotinstance.SpotInstanceRequester;
 import com.jscherrer.personal.deployment.setup.SecurityGroupCreator;
 import org.junit.AfterClass;
 import org.slf4j.Logger;
