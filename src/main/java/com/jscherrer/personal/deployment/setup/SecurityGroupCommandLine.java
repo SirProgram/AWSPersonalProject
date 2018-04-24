@@ -1,6 +1,6 @@
-package com.jscherrer.personal.setup;
+package com.jscherrer.personal.deployment.setup;
 
-import com.jscherrer.personal.aws.AWSConstants;
+import com.jscherrer.personal.deployment.aws.AWSConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

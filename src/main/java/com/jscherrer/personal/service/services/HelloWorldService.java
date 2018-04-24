@@ -1,4 +1,4 @@
-package com.jscherrer.personal.services;
+package com.jscherrer.personal.service.services;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

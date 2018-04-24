@@ -1,4 +1,4 @@
-package com.jscherrer.personal.setup;
+package com.jscherrer.personal.deployment.setup;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2;
