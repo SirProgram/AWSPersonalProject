@@ -7,12 +7,16 @@ import com.amazonaws.services.ec2.model.AuthorizeSecurityGroupIngressRequest;
 import com.amazonaws.services.ec2.model.CreateSecurityGroupRequest;
 import com.amazonaws.services.ec2.model.IpPermission;
 import com.amazonaws.services.ec2.model.IpRange;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class SecurityGroupCreator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SecurityGroupCreator.class);
 
     public void createSecurityGroup(String securityGroupName, String securityGroupDescription) {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
@@ -34,7 +38,7 @@ public class SecurityGroupCreator {
             ec2.authorizeSecurityGroupIngress(ingressRequest);
         } catch (AmazonServiceException ase) {
             //Already created?
-            System.out.println(ase.getMessage());
+            LOG.info(ase.getMessage());
         }
     }
 
@@ -56,7 +60,7 @@ public class SecurityGroupCreator {
             InetAddress addr = InetAddress.getLocalHost();
             ipAddr = addr.getHostAddress() + "/10";
         } catch (UnknownHostException e) {
-            System.err.println(e.getMessage());
+            LOG.error(e.getMessage());
         }
         return ipAddr;
     }
@@ -68,7 +72,7 @@ public class SecurityGroupCreator {
             return true;
         } catch (AmazonServiceException ase) {
             //Already created?
-            System.err.println(ase.getMessage());
+            LOG.error(ase.getMessage());
         }
         return false;
     }

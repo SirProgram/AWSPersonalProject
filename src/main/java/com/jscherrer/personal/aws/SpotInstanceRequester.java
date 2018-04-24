@@ -1,18 +1,19 @@
-package com.jscherrer.personal;
+package com.jscherrer.personal.aws;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SpotInstanceRequests {
+public class SpotInstanceRequester {
 
-    private static final String AMI = "ami-3bfab942";
-    private static final String INSTANCE_TYPE = "t1.micro";
+    private static final Logger LOG = LoggerFactory.getLogger(SpotInstanceRequester.class);
     private static final AmazonEC2 EC2 = AmazonEC2ClientBuilder.defaultClient();
 
     public ArrayList<String> makeSpotRequest(RequestSpotInstancesRequest spotInstanceRequest) {
@@ -30,11 +31,11 @@ public class SpotInstanceRequests {
                     new CancelSpotInstanceRequestsRequest(requestIdsToCancel);
             EC2.cancelSpotInstanceRequests(cancelRequest);
         } catch (AmazonServiceException e) {
-            System.err.println("Error cancelling instances");
-            System.err.println("Caught Exception: " + e.getMessage());
-            System.err.println("Reponse Status Code: " + e.getStatusCode());
-            System.err.println("Error Code: " + e.getErrorCode());
-            System.err.println("Request ID: " + e.getRequestId());
+            LOG.error("Error cancelling instances");
+            LOG.error("Caught Exception: " + e.getMessage());
+            LOG.error("Reponse Status Code: " + e.getStatusCode());
+            LOG.error("Error Code: " + e.getErrorCode());
+            LOG.error("Request ID: " + e.getRequestId());
         }
     }
 
@@ -43,11 +44,11 @@ public class SpotInstanceRequests {
             TerminateInstancesRequest terminateRequest = new TerminateInstancesRequest(instanceIdsToTerminate);
             EC2.terminateInstances(terminateRequest);
         } catch (AmazonServiceException e) {
-            System.err.println("Error terminating instances");
-            System.err.println("Caught Exception: " + e.getMessage());
-            System.err.println("Reponse Status Code: " + e.getStatusCode());
-            System.err.println("Error Code: " + e.getErrorCode());
-            System.err.println("Request ID: " + e.getRequestId());
+            LOG.error("Error terminating instances");
+            LOG.error("Caught Exception: " + e.getMessage());
+            LOG.error("Reponse Status Code: " + e.getStatusCode());
+            LOG.error("Error Code: " + e.getErrorCode());
+            LOG.error("Request ID: " + e.getRequestId());
         }
     }
 
@@ -71,19 +72,19 @@ public class SpotInstanceRequests {
                     }
                 }
             } catch (AmazonServiceException e) {
-                System.err.println(e.getMessage());
+                LOG.error(e.getMessage());
                 waitingOnInstances = true;
             }
 
             try {
-                System.out.println("Waiting on instances...");
+                LOG.info("Waiting on instances...");
                 Thread.sleep(10*1000);
             } catch (InterruptedException e) {
                 //Deliberately do nothing
             }
         }
 
-        System.out.println("All instances active!");
+        LOG.info("All instances active!");
     }
 
     public ArrayList<String> getInstanceIds(Collection<String> requestIds) {
@@ -103,7 +104,7 @@ public class SpotInstanceRequests {
         ArrayList<String> spotInstanceRequestIds = new ArrayList<>();
 
         for (SpotInstanceRequest requestResponse : requestResponses) {
-            System.out.println("Created Spot Request: " + requestResponse.getSpotInstanceRequestId());
+            LOG.info("Created Spot Request: " + requestResponse.getSpotInstanceRequestId());
             spotInstanceRequestIds.add(requestResponse.getSpotInstanceRequestId());
         }
 
@@ -112,8 +113,8 @@ public class SpotInstanceRequests {
 
     private LaunchSpecification getDefaultLaunchSpecification() {
         LaunchSpecification launchSpecification = new LaunchSpecification();
-        launchSpecification.setImageId(AMI);
-        launchSpecification.setInstanceType(INSTANCE_TYPE);
+        launchSpecification.setImageId(AWSConstants.DEFAULT_AMI);
+        launchSpecification.setInstanceType(AWSConstants.DEFAULT_INSTANCE_TYPE);
 
         ArrayList<String> securityGroups = new ArrayList<>();
         securityGroups.add(AWSConstants.SECURITY_GROUP_NAME);

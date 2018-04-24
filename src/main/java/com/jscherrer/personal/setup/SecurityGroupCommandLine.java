@@ -1,9 +1,12 @@
 package com.jscherrer.personal.setup;
 
-import com.jscherrer.personal.AWSConstants;
+import com.jscherrer.personal.aws.AWSConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SecurityGroupCommandLine {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SecurityGroupCommandLine.class);
     private static final SecurityGroupCreator createSecurityGroup = new SecurityGroupCreator();
 
     public static void main(String[] args) {
@@ -18,8 +21,8 @@ public class SecurityGroupCommandLine {
             securityGroupDescription = args[1];
         }
 
-        System.out.println("Creating security group with name " + securityGroupName);
-        System.out.println("Description " + securityGroupDescription);
+        LOG.info("Creating security group with name " + securityGroupName);
+        LOG.info("Description " + securityGroupDescription);
 
         createSecurityGroup.createSecurityGroup(securityGroupName, securityGroupDescription);
     }
