@@ -3,6 +3,9 @@
 This is a personal project written in Java aiming to have a couple of instances hosted in AWS,
 on demand using spot instances, with the instances able to call and use AWS features.
 
+The first aim of the project is have an automated deployment tool, such that
+created applications can quickly be deployed to spot instances within AWS.
+
 ## Running this project
 
 To build this project you will need to have the following on your machine:
