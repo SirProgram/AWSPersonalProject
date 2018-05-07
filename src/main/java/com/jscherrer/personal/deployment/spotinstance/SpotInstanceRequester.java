@@ -4,7 +4,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.*;
-import com.jscherrer.personal.deployment.AWSConstants;
+import com.jscherrer.personal.deployment.DefaultLaunchConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class SpotInstanceRequester {
 
     public ArrayList<String> makeSpotRequest(RequestSpotInstancesRequest spotInstanceRequest, Collection<String> securityGroups) {
         if (spotInstanceRequest.getLaunchSpecification() == null) {
-            spotInstanceRequest.setLaunchSpecification(getDefaultLaunchSpecification());
+            spotInstanceRequest.setLaunchSpecification(DefaultLaunchConfiguration.getDefaultLaunchSpecification(EC2));
         }
         spotInstanceRequest.getLaunchSpecification().setSecurityGroups(securityGroups);
 
@@ -28,7 +28,7 @@ public class SpotInstanceRequester {
 
     public ArrayList<String> makeSpotRequest(RequestSpotInstancesRequest spotInstanceRequest) {
         if (spotInstanceRequest.getLaunchSpecification() == null) {
-            spotInstanceRequest.setLaunchSpecification(getDefaultLaunchSpecification());
+            spotInstanceRequest.setLaunchSpecification(DefaultLaunchConfiguration.getDefaultLaunchSpecification(EC2));
         }
 
         RequestSpotInstancesResult requestResult = EC2.requestSpotInstances(spotInstanceRequest);
@@ -115,28 +115,4 @@ public class SpotInstanceRequester {
         return spotInstanceRequestIds;
     }
 
-    private LaunchSpecification getDefaultLaunchSpecification() {
-        LaunchSpecification launchSpecification = new LaunchSpecification();
-        launchSpecification.setImageId(AWSConstants.DEFAULT_AMI);
-        launchSpecification.setInstanceType(AWSConstants.DEFAULT_INSTANCE_TYPE);
-
-        ArrayList<String> securityGroups = new ArrayList<>();
-        securityGroups.add(AWSConstants.SECURITY_GROUP_NAME);
-        launchSpecification.setSecurityGroups(securityGroups);
-        launchSpecification.setKeyName(getKeyPairName());
-        return launchSpecification;
-    }
-
-    private String getKeyPairName() {
-        DescribeKeyPairsRequest keyPairsRequest = new DescribeKeyPairsRequest();
-        DescribeKeyPairsResult describeKeyPairsResult = EC2.describeKeyPairs(keyPairsRequest);
-
-        describeKeyPairsResult.getKeyPairs();
-        if (describeKeyPairsResult.getKeyPairs().size() == 1) {
-            return describeKeyPairsResult.getKeyPairs().get(0).getKeyName();
-        } else {
-            LOG.warn("Multiple KeyPairNames exist, not authing any");
-            return null;
-        }
-    }
 }
