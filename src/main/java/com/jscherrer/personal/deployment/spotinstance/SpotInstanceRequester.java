@@ -17,6 +17,15 @@ public class SpotInstanceRequester {
     private static final Logger LOG = LoggerFactory.getLogger(SpotInstanceRequester.class);
     private static final AmazonEC2 EC2 = AmazonEC2ClientBuilder.defaultClient();
 
+    public ArrayList<String> makeSpotRequest(RequestSpotInstancesRequest spotInstanceRequest, Collection<String> securityGroups) {
+        if (spotInstanceRequest.getLaunchSpecification() == null) {
+            spotInstanceRequest.setLaunchSpecification(getDefaultLaunchSpecification());
+        }
+        spotInstanceRequest.getLaunchSpecification().setSecurityGroups(securityGroups);
+
+        return makeSpotRequest(spotInstanceRequest);
+    }
+
     public ArrayList<String> makeSpotRequest(RequestSpotInstancesRequest spotInstanceRequest) {
         if (spotInstanceRequest.getLaunchSpecification() == null) {
             spotInstanceRequest.setLaunchSpecification(getDefaultLaunchSpecification());

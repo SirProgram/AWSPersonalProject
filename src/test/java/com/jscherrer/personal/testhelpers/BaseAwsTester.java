@@ -27,9 +27,9 @@ public class BaseAwsTester {
         if (requestIds != null && requestIds.size() > 0) {
             spotInstanceRequester.stopSpotRequest(requestIds);
         }
-        if (instanceIds != null && instanceIds.size() > 0) {
-            spotInstanceRequester.stopInstances(instanceIds);
-        }
+        //if (instanceIds != null && instanceIds.size() > 0) {
+        //    spotInstanceRequester.stopInstances(instanceIds);
+        //}
     }
 
     protected static void setupSecurityGroup() throws UnknownHostException {
@@ -44,7 +44,9 @@ public class BaseAwsTester {
         spotInstanceRequest.setSpotPrice(AWSTestConstants.AWS_SPOT_PRICE);
         spotInstanceRequest.setInstanceCount(1);
 
-        requestIds = spotInstanceRequester.makeSpotRequest(spotInstanceRequest);
+        ArrayList<String> testSecurityGroups = new ArrayList<>();
+        testSecurityGroups.add(AWSTestConstants.SECURITY_GROUP_NAME);
+        requestIds = spotInstanceRequester.makeSpotRequest(spotInstanceRequest, testSecurityGroups);
         spotInstanceRequester.waitForActiveInstances(requestIds);
 
         instanceIds = spotInstanceRequester.getInstanceIds(requestIds);

@@ -1,12 +1,14 @@
 package com.jscherrer.personal.deployment.spotinstance;
 
 import com.amazonaws.services.ec2.model.RequestSpotInstancesRequest;
+import com.jscherrer.personal.testhelpers.AWSTestConstants;
 import com.jscherrer.personal.testhelpers.BaseAwsTester;
 import org.assertj.core.api.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class SpotInstanceRequesterTest extends BaseAwsTester {
 
@@ -22,7 +24,10 @@ public class SpotInstanceRequesterTest extends BaseAwsTester {
         int instanceCount = 2;
         spotInstanceRequest.setInstanceCount(instanceCount);
 
-        requestIds = spotInstanceRequester.makeSpotRequest(spotInstanceRequest);
+        ArrayList<String> testSecurityGroups = new ArrayList<>();
+        testSecurityGroups.add(AWSTestConstants.SECURITY_GROUP_NAME);
+
+        requestIds = spotInstanceRequester.makeSpotRequest(spotInstanceRequest, testSecurityGroups);
         spotInstanceRequester.waitForActiveInstances(requestIds);
 
         instanceIds = spotInstanceRequester.getInstanceIds(requestIds);

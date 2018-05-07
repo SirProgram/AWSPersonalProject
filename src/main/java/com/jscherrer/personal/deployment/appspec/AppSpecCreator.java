@@ -12,12 +12,7 @@ import java.util.LinkedHashMap;
 public class AppSpecCreator {
 
     public String createAppSpecYaml(AppSpecFormat config) {
-
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setIndent(4);
-        options.setIndicatorIndent(2);
-        options.setLineBreak(DumperOptions.LineBreak.UNIX);
+        DumperOptions options = createYamlOptions();
         Yaml appSpecYaml = new Yaml(options);
 
         LinkedHashMap<String, Object> appFileTopLevel = new LinkedHashMap<>();
@@ -36,6 +31,15 @@ public class AppSpecCreator {
         }
 
         return destinationFile;
+    }
+
+    private DumperOptions createYamlOptions() {
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setIndent(4);
+        options.setIndicatorIndent(2);
+        options.setLineBreak(DumperOptions.LineBreak.UNIX);
+        return options;
     }
 
 }
