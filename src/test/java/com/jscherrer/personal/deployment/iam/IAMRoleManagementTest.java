@@ -1,8 +1,9 @@
 package com.jscherrer.personal.deployment.iam;
 
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
-import com.amazonaws.services.identitymanagement.model.*;
+import com.amazonaws.services.identitymanagement.model.AttachedPolicy;
+import com.amazonaws.services.identitymanagement.model.InstanceProfile;
+import com.amazonaws.services.identitymanagement.model.Role;
 import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
@@ -11,14 +12,12 @@ import org.junit.Test;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 public class IAMRoleManagementTest {
 
-    private static final AmazonIdentityManagement IAM = AmazonIdentityManagementClientBuilder.defaultClient();
-    private static final String rolePolicyFilePath = "src/test/resources/TrustRolePolicy.json";
+    private final IAMTestHelper IAMTestHelper = new IAMTestHelper(AmazonIdentityManagementClientBuilder.defaultClient());
 
     private IAMRoleManagement iamRoleManagement;
     private String instanceProfileName;
@@ -32,20 +31,20 @@ public class IAMRoleManagementTest {
     @After
     public void tearDown() {
         if (instanceProfileName != null) {
-            cleanUpInstanceProfile(instanceProfileName);
+            IAMTestHelper.cleanUpInstanceProfile(instanceProfileName);
         }
         if (roleName != null) {
-            cleanUpRole(roleName);
+            IAMTestHelper.cleanUpRole(roleName);
         }
     }
 
     @Test
     public void createRole() throws IOException {
         roleName = UUID.randomUUID().toString();
-        String rolePolicyAsString = getRolePolicyAsString();
+        String rolePolicyAsString = IAMTestHelper.getTrustPolicyAsString();
         iamRoleManagement.createRole(roleName, rolePolicyAsString);
 
-        Role role = getRole(roleName);
+        Role role = IAMTestHelper.getRole(roleName);
         Assertions.assertThat(role).isNotNull();
         Assertions.assertThat(role.getRoleName()).isEqualTo(roleName);
         String decodedRolePolicy = URLDecoder.decode(role.getAssumeRolePolicyDocument(), String.valueOf(StandardCharsets.UTF_8));
@@ -57,7 +56,7 @@ public class IAMRoleManagementTest {
         instanceProfileName = UUID.randomUUID().toString();
         iamRoleManagement.createInstanceProfile(instanceProfileName);
 
-        InstanceProfile instanceProfileResult = getInstanceProfile(instanceProfileName);
+        InstanceProfile instanceProfileResult = IAMTestHelper.getInstanceProfile(instanceProfileName);
         Assertions.assertThat(instanceProfileResult).isNotNull();
         Assertions.assertThat(instanceProfileResult.getInstanceProfileName()).isEqualTo(instanceProfileName);
     }
@@ -70,57 +69,30 @@ public class IAMRoleManagementTest {
 
         iamRoleManagement.addRoleToInstanceProfile(roleName, instanceProfileName);
 
-        InstanceProfile instanceProfileResult = getInstanceProfile(instanceProfileName);
+        InstanceProfile instanceProfileResult = IAMTestHelper.getInstanceProfile(instanceProfileName);
         Assertions.assertThat(instanceProfileResult).isNotNull();
         Assertions.assertThat(instanceProfileResult.getInstanceProfileName()).isEqualTo(instanceProfileName);
         Assertions.assertThat(instanceProfileResult.getRoles()).hasSize(1);
         Assertions.assertThat(instanceProfileResult.getRoles().get(0).getRoleName()).isEqualTo(roleName);
     }
 
+    @Test
+    public void attachPolicyToRole() throws IOException {
+        roleName = givenRoleName();
+        String policyArn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess";
+
+        iamRoleManagement.attachPolicyToRole(policyArn, roleName);
+
+        List<AttachedPolicy> attachedPolicies = IAMTestHelper.getAttachedRolePolicies(roleName);
+
+        Assertions.assertThat(attachedPolicies).hasSize(1);
+        Assertions.assertThat(attachedPolicies.get(0).getPolicyArn()).isEqualTo(policyArn);
+    }
+
     private String givenRoleName() throws IOException {
         roleName = UUID.randomUUID().toString();
-        String rolePolicyAsString = getRolePolicyAsString();
+        String rolePolicyAsString = IAMTestHelper.getTrustPolicyAsString();
         iamRoleManagement.createRole(roleName, rolePolicyAsString);
         return roleName;
-    }
-
-    private Role getRole(String roleName) {
-        GetRoleRequest getRoleRequest = new GetRoleRequest();
-        getRoleRequest.setRoleName(roleName);
-
-        return IAM.getRole(getRoleRequest).getRole();
-    }
-
-    private String getRolePolicyAsString() throws IOException {
-        return new String(Files.readAllBytes(Paths.get(rolePolicyFilePath)));
-    }
-
-    private InstanceProfile getInstanceProfile(String instanceProfileName) {
-        GetInstanceProfileRequest instanceProfileRequest = new GetInstanceProfileRequest();
-        instanceProfileRequest.setInstanceProfileName(instanceProfileName);
-
-        return IAM.getInstanceProfile(instanceProfileRequest).getInstanceProfile();
-    }
-
-    private void cleanUpInstanceProfile(String instanceProfileName) {
-        InstanceProfile instanceProfile = getInstanceProfile(instanceProfileName);
-        for (Role role : instanceProfile.getRoles()) {
-            RemoveRoleFromInstanceProfileRequest removeRoleRequest = new RemoveRoleFromInstanceProfileRequest();
-            removeRoleRequest.setRoleName(role.getRoleName());
-            removeRoleRequest.setInstanceProfileName(instanceProfileName);
-            IAM.removeRoleFromInstanceProfile(removeRoleRequest);
-        }
-
-        DeleteInstanceProfileRequest deleteInstanceProfileRequest = new DeleteInstanceProfileRequest();
-        deleteInstanceProfileRequest.setInstanceProfileName(instanceProfileName);
-
-        IAM.deleteInstanceProfile(deleteInstanceProfileRequest);
-    }
-
-    private void cleanUpRole(String roleName) {
-        DeleteRoleRequest deleteRoleRequest = new DeleteRoleRequest();
-        deleteRoleRequest.setRoleName(roleName);
-
-        IAM.deleteRole(deleteRoleRequest);
     }
 }

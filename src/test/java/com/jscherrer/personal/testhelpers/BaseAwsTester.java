@@ -2,7 +2,10 @@ package com.jscherrer.personal.testhelpers;
 
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
+import com.amazonaws.services.ec2.model.LaunchSpecification;
 import com.amazonaws.services.ec2.model.RequestSpotInstancesRequest;
+import com.amazonaws.services.elasticbeanstalk.model.LaunchConfiguration;
+import com.jscherrer.personal.deployment.DefaultLaunchConfiguration;
 import com.jscherrer.personal.deployment.spotinstance.SpotInstanceRequester;
 import com.jscherrer.personal.deployment.setup.SecurityGroupCreator;
 import org.junit.AfterClass;
@@ -27,9 +30,9 @@ public class BaseAwsTester {
         if (requestIds != null && requestIds.size() > 0) {
             spotInstanceRequester.stopSpotRequest(requestIds);
         }
-        //if (instanceIds != null && instanceIds.size() > 0) {
-        //    spotInstanceRequester.stopInstances(instanceIds);
-        //}
+        if (instanceIds != null && instanceIds.size() > 0) {
+            spotInstanceRequester.stopInstances(instanceIds);
+        }
     }
 
     protected static void setupSecurityGroup() throws UnknownHostException {
@@ -39,10 +42,15 @@ public class BaseAwsTester {
     }
 
     protected static void startUpSpotInstance() {
+        startUpSpotInstance(DefaultLaunchConfiguration.getDefaultLaunchSpecification(EC2));
+    }
+
+    protected static void startUpSpotInstance(LaunchSpecification launchSpecification) {
         LOG.info("Starting up spot instances");
         RequestSpotInstancesRequest spotInstanceRequest = new RequestSpotInstancesRequest();
         spotInstanceRequest.setSpotPrice(AWSTestConstants.AWS_SPOT_PRICE);
         spotInstanceRequest.setInstanceCount(1);
+        spotInstanceRequest.setLaunchSpecification(launchSpecification);
 
         ArrayList<String> testSecurityGroups = new ArrayList<>();
         testSecurityGroups.add(AWSTestConstants.SECURITY_GROUP_NAME);
