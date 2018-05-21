@@ -54,7 +54,7 @@ public class SecurityGroupCreator {
         ipPermissions.add(createSSHPermission(protectedIpRanges));
 
         ArrayList<IpRange> allPublicIps = new ArrayList<>();
-        allPublicIps.add(new IpRange().withCidrIp("0.0.0.0/32"));
+        allPublicIps.add(new IpRange().withCidrIp("0.0.0.0/0"));
         ipPermissions.add(createIPV4Permission(allPublicIps));
 
         return ipPermissions;
