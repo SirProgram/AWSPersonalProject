@@ -1,2 +1,4 @@
-aws cp https://s3-eu-west-1.amazonaws.com/s3deploybucket/personal-webapp.war /var/lib/tomcat/webapps/personal-webapp.war
-sudo service tomcat restart
+#!/bin/bash
+yum -y install tomcat7
+aws s3 cp s3://${s3Path}/${warName} /var/lib/tomcat7/webapps/${warName}
+service tomcat7 start
