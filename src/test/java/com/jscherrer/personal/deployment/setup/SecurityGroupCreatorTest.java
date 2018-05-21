@@ -1,9 +1,6 @@
 package com.jscherrer.personal.deployment.setup;
 
-import com.amazonaws.services.ec2.model.DeleteSecurityGroupRequest;
-import com.amazonaws.services.ec2.model.DescribeSecurityGroupsRequest;
-import com.amazonaws.services.ec2.model.DescribeSecurityGroupsResult;
-import com.amazonaws.services.ec2.model.SecurityGroup;
+import com.amazonaws.services.ec2.model.*;
 import com.jayway.awaitility.Awaitility;
 import com.jayway.awaitility.Duration;
 import com.jscherrer.personal.testhelpers.BaseAwsTester;
@@ -43,6 +40,46 @@ public class SecurityGroupCreatorTest extends BaseAwsTester {
                 Assertions.assertThat(getSecurityGroups(securityGroupNames))
                         .extracting(SecurityGroup::getGroupName)
                         .containsExactly(expectedSecurityGroupName));
+    }
+
+    @Test
+    public void hasSSHOnPort22Permissions() throws UnknownHostException {
+        securityGroupCreator.createSecurityGroup(expectedSecurityGroupName,
+                "Security Group created from SecurityGroupCreatorTest");
+
+        ArrayList<String> securityGroupNames = new ArrayList<>();
+        securityGroupNames.add(expectedSecurityGroupName);
+
+        IpPermission ipPermission = new IpPermission()
+                .withIpProtocol("tcp")
+                .withFromPort(22)
+                .withToPort(22);
+
+        Awaitility.await().atMost(Duration.TEN_SECONDS).until(() ->
+                Assertions.assertThat(getSecurityGroups(securityGroupNames))
+                        .flatExtracting(SecurityGroup::getIpPermissions)
+                        .usingElementComparatorOnFields("ipProtocol", "fromPort", "toPort")
+                        .contains(ipPermission));
+    }
+
+    @Test
+    public void hasTCP8080Permissions() throws UnknownHostException {
+        securityGroupCreator.createSecurityGroup(expectedSecurityGroupName,
+                "Security Group created from SecurityGroupCreatorTest");
+
+        ArrayList<String> securityGroupNames = new ArrayList<>();
+        securityGroupNames.add(expectedSecurityGroupName);
+
+        IpPermission ipPermission = new IpPermission()
+                .withIpProtocol("tcp")
+                .withFromPort(8080)
+                .withToPort(8080);
+
+        Awaitility.await().atMost(Duration.TEN_SECONDS).until(() ->
+                Assertions.assertThat(getSecurityGroups(securityGroupNames))
+                        .flatExtracting(SecurityGroup::getIpPermissions)
+                        .usingElementComparatorOnFields("ipProtocol", "fromPort", "toPort")
+                        .contains(ipPermission));
     }
 
     private List<SecurityGroup> getSecurityGroups(ArrayList<String> securityGroupNames) {
