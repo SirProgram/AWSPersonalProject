@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SpotInstanceRequester {
 
@@ -70,7 +71,7 @@ public class SpotInstanceRequester {
                 waitingOnInstances = false;
 
                 for (SpotInstanceRequest describeResponse : describeResponses) {
-                    if (describeResponse.getState().equals("open")) {
+                    if (describeResponse.getState().equals(SpotInstanceState.Open.toString())) {
                         waitingOnInstances = true;
                         break;
                     }
@@ -102,6 +103,16 @@ public class SpotInstanceRequester {
             instanceIds.add(spotInstanceRequest.getInstanceId());
         }
         return instanceIds;
+    }
+
+    public List<Instance> describeInstances(Collection<String> instanceIds) {
+        DescribeInstancesRequest describeRequest = new DescribeInstancesRequest();
+        describeRequest.setInstanceIds(instanceIds);
+
+        DescribeInstancesResult describeResult = EC2.describeInstances(describeRequest);
+        return describeResult.getReservations().stream()
+                .flatMap(r -> r.getInstances().stream())
+                .collect(Collectors.toList());
     }
 
     private ArrayList<String> spotInstanceRequestIdsFromResponses(List<SpotInstanceRequest> requestResponses) {
