@@ -50,13 +50,7 @@ public class FullEndToEnd extends BaseAwsTester {
     public void deployAndHitEndpoint() throws IOException {
         setupSecurityGroup();
 
-        LaunchSpecification launchSpec = DefaultLaunchConfiguration.getDefaultLaunchSpecification(EC2);
-
-        IamInstanceProfileSpecification instanceProfileSpec = setUpRoleAndIAM();
-        launchSpec.setIamInstanceProfile(instanceProfileSpec);
-
-        String deploymentUserData = StartUpScript.getDefaultStartUpScriptForS3File("s3deploybucket", warAppName + ".war");
-        launchSpec.setUserData(deploymentUserData);
+        LaunchSpecification launchSpec = createLaunchSpecification();
 
         //Needed for Instance Profile to become ready
         Awaitility.await().atMost(Duration.ONE_MINUTE).pollInterval(Duration.TEN_SECONDS).until(() -> {
@@ -70,6 +64,17 @@ public class FullEndToEnd extends BaseAwsTester {
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
             Assertions.assertThat(response.getBody().prettyPrint()).isEqualTo("Greetings Amely");
         });
+    }
+
+    private LaunchSpecification createLaunchSpecification() throws IOException {
+        LaunchSpecification launchSpec = DefaultLaunchConfiguration.getDefaultLaunchSpecification(EC2);
+
+        IamInstanceProfileSpecification instanceProfileSpec = setUpRoleAndIAM();
+        launchSpec.setIamInstanceProfile(instanceProfileSpec);
+
+        String deploymentUserData = StartUpScript.getDefaultStartUpScriptForS3File("s3deploybucket", warAppName + ".war");
+        launchSpec.setUserData(deploymentUserData);
+        return launchSpec;
     }
 
     private IamInstanceProfileSpecification setUpRoleAndIAM() throws IOException {
