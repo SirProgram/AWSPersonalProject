@@ -7,7 +7,7 @@ import java.util.Base64;
 
 public class StartUpScript {
 
-    private static final String startUpScriptPath = "src/main/resources/copyWarFromS3.sh";
+    private static final String startUpScriptPath = "src/main/resources/setupEnvironment.sh";
 
     public static String getDefaultStartUpScriptForS3File(String s3Path, String warName) throws IOException {
         String startUpScript = new String(Files.readAllBytes(Paths.get(startUpScriptPath)));
@@ -22,7 +22,5 @@ public class StartUpScript {
     public static String replacePropertyInScript(String scriptString, String propertyName, String value) {
         return scriptString.replaceAll("\\$\\{" + propertyName + "\\}", value);
     }
-
-
 
 }

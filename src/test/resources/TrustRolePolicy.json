@@ -7,6 +7,13 @@
         "Service": "ec2.amazonaws.com"
       },
       "Action": "sts:AssumeRole"
+    },
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "spot.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
     }
   ]
 }
