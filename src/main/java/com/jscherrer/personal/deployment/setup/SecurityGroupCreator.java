@@ -7,6 +7,7 @@ import com.amazonaws.services.ec2.model.AuthorizeSecurityGroupIngressRequest;
 import com.amazonaws.services.ec2.model.CreateSecurityGroupRequest;
 import com.amazonaws.services.ec2.model.IpPermission;
 import com.amazonaws.services.ec2.model.IpRange;
+import com.jscherrer.personal.deployment.AWSConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,8 +21,6 @@ import java.util.ArrayList;
 public class SecurityGroupCreator {
 
     private static final Logger LOG = LoggerFactory.getLogger(SecurityGroupCreator.class);
-    public static final int IPV4_PORT = 8080;
-    public static final int SSH_PORT = 22;
 
     public void createSecurityGroup(String securityGroupName, String securityGroupDescription) throws UnknownHostException {
         AmazonEC2 ec2 = AmazonEC2ClientBuilder.defaultClient();
@@ -63,8 +62,8 @@ public class SecurityGroupCreator {
     private IpPermission createSSHPermission(ArrayList<IpRange> protectedIpRanges) {
         IpPermission sshPermission = new IpPermission();
         sshPermission.setIpProtocol("tcp");
-        sshPermission.setFromPort(SSH_PORT);
-        sshPermission.setToPort(SSH_PORT);
+        sshPermission.setFromPort(AWSConstants.SSH_PORT);
+        sshPermission.setToPort(AWSConstants.SSH_PORT);
         sshPermission.setIpv4Ranges(protectedIpRanges);
         return sshPermission;
     }
@@ -72,8 +71,8 @@ public class SecurityGroupCreator {
     private IpPermission createIPV4Permission(ArrayList<IpRange> ipRange) {
         IpPermission ipv4Permission = new IpPermission();
         ipv4Permission.setIpProtocol("tcp");
-        ipv4Permission.setFromPort(IPV4_PORT);
-        ipv4Permission.setToPort(IPV4_PORT);
+        ipv4Permission.setFromPort(AWSConstants.IPV4_PORT);
+        ipv4Permission.setToPort(AWSConstants.IPV4_PORT);
         ipv4Permission.setIpv4Ranges(ipRange);
         return ipv4Permission;
     }
