@@ -65,7 +65,7 @@ public class FullEndToEnd extends BaseAwsTester {
 
         Awaitility.await().atMost(Duration.TWO_MINUTES).pollInterval(Duration.TEN_SECONDS)
                 .ignoreException(ConnectException.class).until(() -> {
-            Response response = RestAssured.given().get(hellowWorldUrlForInstance() + "Amely");
+            Response response = RestAssured.given().get(helloWorldUrlForInstance() + "Amely");
 
             Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SC_OK);
             Assertions.assertThat(response.getBody().prettyPrint()).isEqualTo("Greetings Amely");
@@ -92,7 +92,7 @@ public class FullEndToEnd extends BaseAwsTester {
 
     }
 
-    private String hellowWorldUrlForInstance() {
+    private String helloWorldUrlForInstance() {
         List<Instance> instances = spotInstanceRequester.describeInstances(instanceIds);
         String publicIpAddress = instances.get(0).getPublicIpAddress();
 
