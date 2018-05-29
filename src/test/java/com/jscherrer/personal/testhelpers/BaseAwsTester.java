@@ -32,9 +32,9 @@ public class BaseAwsTester {
         if (requestIds != null && requestIds.size() > 0) {
             spotInstanceRequester.stopSpotRequest(requestIds);
         }
-        /*if (instanceIds != null && instanceIds.size() > 0) {
+        if (instanceIds != null && instanceIds.size() > 0) {
             spotInstanceRequester.stopInstances(instanceIds);
-        }*/
+        }
     }
 
     protected static void setupSecurityGroup() throws UnknownHostException {
