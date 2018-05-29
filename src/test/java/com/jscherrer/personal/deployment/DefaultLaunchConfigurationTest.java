@@ -2,10 +2,8 @@ package com.jscherrer.personal.deployment;
 
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.model.DescribeKeyPairsResult;
-import com.amazonaws.services.ec2.model.KeyPair;
 import com.amazonaws.services.ec2.model.KeyPairInfo;
 import com.amazonaws.services.ec2.model.LaunchSpecification;
-import jersey.repackaged.com.google.common.collect.Iterables;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -13,8 +11,6 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
-
-import static org.junit.Assert.*;
 
 public class DefaultLaunchConfigurationTest {
 

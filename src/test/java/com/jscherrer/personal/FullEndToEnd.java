@@ -1,12 +1,8 @@
 package com.jscherrer.personal;
 
-import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.IamInstanceProfileSpecification;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.LaunchSpecification;
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
-import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
 import com.amazonaws.services.identitymanagement.model.InstanceProfile;
 import com.jayway.awaitility.Awaitility;
 import com.jayway.awaitility.Duration;
@@ -17,6 +13,7 @@ import com.jscherrer.personal.deployment.DefaultLaunchConfiguration;
 import com.jscherrer.personal.deployment.StartUpScript;
 import com.jscherrer.personal.deployment.iam.IAMRoleManagement;
 import com.jscherrer.personal.deployment.iam.IAMTestHelper;
+import com.jscherrer.personal.deployment.s3.S3WarUploader;
 import com.jscherrer.personal.testhelpers.BaseAwsTester;
 import org.apache.http.HttpStatus;
 import org.assertj.core.api.Assertions;
@@ -25,6 +22,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.util.List;
@@ -33,13 +31,13 @@ import java.util.UUID;
 public class FullEndToEnd extends BaseAwsTester {
 
     private static final Logger LOG = LoggerFactory.getLogger(FullEndToEnd.class);
-
-    private static final AmazonEC2 EC2 = AmazonEC2ClientBuilder.defaultClient();
-    private static final AmazonIdentityManagement IAM = AmazonIdentityManagementClientBuilder.defaultClient();
+    private static final String bucketName = "s3deploybucket";
+    private static final String warAppName = "helloworld";
+    private static final String warAppPath = "src/test/resources/" + warAppName + ".war";
+    private static final String testPath = "greet";
 
     private String roleName = UUID.randomUUID().toString();
     private String instanceProfile = UUID.randomUUID().toString();
-    private String warAppName = "personal-webapp";
 
     @Before
     public void setUp() {
@@ -49,6 +47,8 @@ public class FullEndToEnd extends BaseAwsTester {
     @Test
     public void deployAndHitEndpoint() throws IOException {
         setupSecurityGroup();
+
+        uploadWarToS3();
 
         LaunchSpecification launchSpec = createLaunchSpecification();
 
@@ -66,13 +66,18 @@ public class FullEndToEnd extends BaseAwsTester {
         });
     }
 
+    private void uploadWarToS3() {
+        S3WarUploader warUploader = new S3WarUploader();
+        warUploader.uploadFileToS3Bucket(bucketName, warAppName + ".war", new File(warAppPath));
+    }
+
     private LaunchSpecification createLaunchSpecification() throws IOException {
         LaunchSpecification launchSpec = DefaultLaunchConfiguration.getDefaultLaunchSpecification(EC2);
 
         IamInstanceProfileSpecification instanceProfileSpec = setUpRoleAndIAM();
         launchSpec.setIamInstanceProfile(instanceProfileSpec);
 
-        String deploymentUserData = StartUpScript.getDefaultStartUpScriptForS3File("s3deploybucket", warAppName + ".war");
+        String deploymentUserData = StartUpScript.getDefaultStartUpScriptForS3File(bucketName, warAppName + ".war");
         launchSpec.setUserData(deploymentUserData);
         return launchSpec;
     }
@@ -101,7 +106,7 @@ public class FullEndToEnd extends BaseAwsTester {
         List<Instance> instances = spotInstanceRequester.describeInstances(instanceIds);
         String publicIpAddress = instances.get(0).getPublicIpAddress();
 
-        String urlToHit = "http://" + publicIpAddress + ":" + AWSConstants.IPV4_PORT + "/" + warAppName + "/" + "helloworld/";
+        String urlToHit = "http://" + publicIpAddress + ":" + AWSConstants.IPV4_PORT + "/" + warAppName + "/" + testPath + "/";
         LOG.info("helloworld url: " + urlToHit);
         return urlToHit;
     }

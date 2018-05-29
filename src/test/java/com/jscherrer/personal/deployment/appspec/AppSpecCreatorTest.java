@@ -2,16 +2,11 @@ package com.jscherrer.personal.deployment.appspec;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import static org.junit.Assert.*;
 
 public class AppSpecCreatorTest {
 

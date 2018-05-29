@@ -4,6 +4,8 @@ import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.LaunchSpecification;
 import com.amazonaws.services.ec2.model.RequestSpotInstancesRequest;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
+import com.amazonaws.services.identitymanagement.AmazonIdentityManagementClientBuilder;
 import com.jscherrer.personal.deployment.DefaultLaunchConfiguration;
 import com.jscherrer.personal.deployment.setup.SecurityGroupCreator;
 import com.jscherrer.personal.deployment.spotinstance.SpotInstanceRequester;
@@ -21,6 +23,7 @@ public class BaseAwsTester {
     protected static final SpotInstanceRequester spotInstanceRequester = new SpotInstanceRequester();
     protected static final SecurityGroupCreator securityGroupCreator = new SecurityGroupCreator();
     protected static final AmazonEC2 EC2 = AmazonEC2ClientBuilder.defaultClient();
+    protected static final AmazonIdentityManagement IAM = AmazonIdentityManagementClientBuilder.defaultClient();
     protected static ArrayList<String> requestIds = new ArrayList<>();
     protected static ArrayList<String> instanceIds = new ArrayList<>();
 
@@ -29,19 +32,15 @@ public class BaseAwsTester {
         if (requestIds != null && requestIds.size() > 0) {
             spotInstanceRequester.stopSpotRequest(requestIds);
         }
-        if (instanceIds != null && instanceIds.size() > 0) {
+        /*if (instanceIds != null && instanceIds.size() > 0) {
             spotInstanceRequester.stopInstances(instanceIds);
-        }
+        }*/
     }
 
     protected static void setupSecurityGroup() throws UnknownHostException {
         LOG.info("Setting up AWS test security group");
         securityGroupCreator.createSecurityGroup(AWSTestConstants.SECURITY_GROUP_NAME,
                 "Personal Project Aws Test Security Group");
-    }
-
-    protected static void startUpSpotInstance() {
-        startUpSpotInstance(DefaultLaunchConfiguration.getDefaultLaunchSpecification(EC2));
     }
 
     protected static void startUpSpotInstance(LaunchSpecification launchSpecification) {

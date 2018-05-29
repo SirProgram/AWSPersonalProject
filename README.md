@@ -1,12 +1,9 @@
 # AWSPersonalProject
 
-This is a personal project written in Java aiming to have a couple of instances hosted in AWS,
-on demand using spot instances, with the instances able to call and use AWS features.
-
-The first aim of the project is have an automated deployment tool, such that
+This is a personal project written in Java aiming to act as an automated deployment tool, such that
 created applications can quickly be deployed to spot instances within AWS.
 
-## Running this project
+## Building this project
 
 To build this project you will need to have the following on your machine:
 - Java 8 SDK
@@ -26,4 +23,4 @@ To build the project locally, run the following maven command:
 
 `maven install`
 
-This will build the classes, run the tests and build a war file under `target/personal-webapp.war`
+This will build the classes, run the tests and build a jar file under `target/personal-webapp.jar`
