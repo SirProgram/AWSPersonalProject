@@ -27,5 +27,5 @@ To build the project locally, run the following maven command:
 This will build the classes, run the tests and build a jar file under `target/personal-webapp.jar`
 
 #### Current Usage
-Currently the jar file is best used as a library. The file 'FullEndToEnd' in the test package demonstrates a way to
+Currently the jar file is best used as a library. The file `FullEndToEnd` in the test package demonstrates a way to
 deploy an application to s3, and then have a spot instance start up and start running the software.
