@@ -22,12 +22,6 @@ public class IAMRoleManagement {
         AIM.attachRolePolicy(attachRolePolicyRequest);
     }
 
-    public InstanceProfile getInstanceProfile(String name) {
-        GetInstanceProfileRequest getInstanceRequest = new GetInstanceProfileRequest();
-        getInstanceRequest.setInstanceProfileName(name);
-        return AIM.getInstanceProfile(getInstanceRequest).getInstanceProfile();
-    }
-
     public void createInstanceProfile(String name) {
         CreateInstanceProfileRequest createInstanceProfileRequest = new CreateInstanceProfileRequest();
         createInstanceProfileRequest.setInstanceProfileName(name);
